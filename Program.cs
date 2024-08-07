@@ -10,11 +10,6 @@ public class Program
         string cookie = args[0];
         string result = MakeRequest("/your/shops/me/dashboard", cookie);
         string context = result.Split(System.Environment.NewLine).Where(s => s.Contains("Etsy.Context")).First();
-
-
-        Regex count = new Regex("\\\"active_listing_count\\\":.*?,");
-        Regex shop = new Regex("\\\"shop_id\\\":.*?,");
-
         string shopID = string.Empty;
         int listingCount = 0;
 
@@ -31,9 +26,11 @@ public class Program
         while (page * 40 < listingCount)
         {
             i = page * 40;
+
             string item = MakeRequest("/api/v3/ajax/shop/" + shopID + "/listings/search?limit=200&offset=" + i + "&sort_field=ending_date&sort_order=descending&state=active&language_id=0&query=&shop_section_id=&listing_tag=&is_featured=&shipping_profile_id=&return_policy_id=&production_partner_id=&is_retail=true&is_retail_only=&is_pattern=&is_pattern_only=&is_digital=&channels=&is_waitlisted=&has_video=", cookie);
 
-            page = page + 1;
+            page++;
+            
             Console.WriteLine(page + ".json");
             File.WriteAllText(page + ".json", item);
 
@@ -55,13 +52,8 @@ public class Program
 
                     byte[] f = Download(file["url"].Value<string>(), cookie);
                     File.WriteAllBytes(id + "/" + file["name"].Value<string>(), f);
-
                 }
             }
-
-
-
-
         }
 
         static string MakeRequest(string url, string cookie, string verb = "GET", string? body = null)
@@ -96,18 +88,17 @@ public class Program
 
                 List<byte> resp = new List<byte>();
                 Stream s = result.Content.ReadAsStream();
-                while (true)
+                using (StreamReader rdr = new StreamReader(s))
                 {
-                    int r = s.ReadByte();
-
-                    if (r == -1)
-                        break;
-
-                    resp.Add((byte)r);
+                    while (true) {
+                        int r = rdr.Read();
+                        if (r == -1)
+                            break;
+                        resp.Add((byte)r);
+                    }
                 }
                 return resp.ToArray();
             }
         }
     }
-
 }
