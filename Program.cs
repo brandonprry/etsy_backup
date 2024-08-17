@@ -58,47 +58,73 @@ public class Program
 
         static string MakeRequest(string url, string cookie, string verb = "GET", string? body = null)
         {
-            Thread.Sleep(1);
-            var baseAddress = new Uri("https://www.etsy.com");
-            using (var handler = new HttpClientHandler { UseCookies = false })
-            using (var client = new HttpClient(handler) { BaseAddress = baseAddress })
+            int i = 0;
+            while (i < 5)
             {
-                var message = new HttpRequestMessage(HttpMethod.Get, url);
-                message.Headers.Add("User-Agent", "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:128.0) Gecko/20100101 Firefox/128.0");
-                message.Headers.Add("Cookie", cookie);
-                var result = client.Send(message);
-                result.EnsureSuccessStatusCode();
+                try {
+                Thread.Sleep(1);
+                var baseAddress = new Uri("https://www.etsy.com");
+                using (var handler = new HttpClientHandler { UseCookies = false })
+                using (var client = new HttpClient(handler) { BaseAddress = baseAddress })
+                {
+                    var message = new HttpRequestMessage(HttpMethod.Get, url);
+                    message.Headers.Add("User-Agent", "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:128.0) Gecko/20100101 Firefox/128.0");
+                    message.Headers.Add("Cookie", cookie);
+                    var result = client.Send(message);
+                    result.EnsureSuccessStatusCode();
 
-                return new StreamReader(result.Content.ReadAsStream()).ReadToEnd();
+                    return new StreamReader(result.Content.ReadAsStream()).ReadToEnd();
+                }
+                }
+                catch
+                {
+                    i++;
+                    continue;
+                }
             }
+
+            return string.Empty;
         }
 
         static byte[] Download(string url, string cookie, string verb = "GET", string? body = null)
         {
-            Thread.Sleep(1);
-            var baseAddress = new Uri("https://www.etsy.com");
-            using (var handler = new HttpClientHandler { UseCookies = false })
-            using (var client = new HttpClient(handler) { BaseAddress = baseAddress })
+            int i = 0;
+            while (i < 5)
             {
-                var message = new HttpRequestMessage(HttpMethod.Get, url);
-                message.Headers.Add("User-Agent", "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:128.0) Gecko/20100101 Firefox/128.0");
-                message.Headers.Add("Cookie", cookie);
-                var result = client.Send(message);
-                result.EnsureSuccessStatusCode();
+                try{
+                    Thread.Sleep(1);
+                    var baseAddress = new Uri("https://www.etsy.com");
+                    using (var handler = new HttpClientHandler { UseCookies = false })
+                    using (var client = new HttpClient(handler) { BaseAddress = baseAddress })
+                    {
+                        var message = new HttpRequestMessage(HttpMethod.Get, url);
+                        message.Headers.Add("User-Agent", "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:128.0) Gecko/20100101 Firefox/128.0");
+                        message.Headers.Add("Cookie", cookie);
+                        var result = client.Send(message);
+                        result.EnsureSuccessStatusCode();
 
-                List<byte> resp = new List<byte>();
-                Stream s = result.Content.ReadAsStream();
-                using (StreamReader rdr = new StreamReader(s))
-                {
-                    while (true) {
-                        int r = rdr.Read();
-                        if (r == -1)
-                            break;
-                        resp.Add((byte)r);
+                        List<byte> resp = new List<byte>();
+                        Stream s = result.Content.ReadAsStream();
+                        using (StreamReader rdr = new StreamReader(s))
+                        {
+                            while (true) {
+                                int r = rdr.Read();
+                                if (r == -1)
+                                    break;
+                                resp.Add((byte)r);
+                            }
+                        }
+                        return resp.ToArray();
                     }
                 }
-                return resp.ToArray();
+                catch 
+                {
+                    i++;
+                    continue;
+                }
             }
+
+            return new byte[] {};
         }
     }
 }
