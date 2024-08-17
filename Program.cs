@@ -103,9 +103,9 @@ public class Program
                         var result = client.Send(message);
                         result.EnsureSuccessStatusCode();
 
-                        List<byte> resp = new List<byte>();
+                        List<byte> resp = [];
                         Stream s = result.Content.ReadAsStream();
-                        using (StreamReader rdr = new StreamReader(s))
+                        using (StreamReader rdr = new(s))
                         {
                             while (true) {
                                 int r = rdr.Read();
@@ -114,7 +114,7 @@ public class Program
                                 resp.Add((byte)r);
                             }
                         }
-                        return resp.ToArray();
+                        return [.. resp];
                     }
                 }
                 catch 
@@ -124,7 +124,7 @@ public class Program
                 }
             }
 
-            return new byte[] {};
+            return [];
         }
     }
 }
