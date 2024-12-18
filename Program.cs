@@ -8,25 +8,25 @@ public class Program
 {
     public static void Main(string[] args)
     {
-ServicePointManager
-    .ServerCertificateValidationCallback += 
-    (sender, cert, chain, sslPolicyErrors) => true;
+        ServicePointManager
+            .ServerCertificateValidationCallback +=
+            (sender, cert, chain, sslPolicyErrors) => true;
 
-//        string cookie = args[0];
-string cookie ="API_COOKIE";
-//string result = MakeRequest("/your/shops/me/dashboard", cookie);
-//        Console.WriteLine(result);
-//        string context = result.Split(System.Environment.NewLine).Where(s => s.Contains("Etsy.Context")).First();
-//        string shopID = string.Empty;
+        //        string cookie = args[0];
+        string cookie = "API_COOKIE";
+        //string result = MakeRequest("/your/shops/me/dashboard", cookie);
+        //        Console.WriteLine(result);
+        //        string context = result.Split(System.Environment.NewLine).Where(s => s.Contains("Etsy.Context")).First();
+        //        string shopID = string.Empty;
         int listingCount = 0;
 
-//        context = context.Split("window.Etsy=window.Etsy||{};Etsy.Context=")[1].Replace(";</script>", string.Empty);
+        //        context = context.Split("window.Etsy=window.Etsy||{};Etsy.Context=")[1].Replace(";</script>", string.Empty);
 
-  //      JObject c = JsonConvert.DeserializeObject(context) as JObject;
+        //      JObject c = JsonConvert.DeserializeObject(context) as JObject;
 
-        string shopID ="41698997";
+        string shopID = "41698997";
 
-        JObject listingSummary = JObject.Parse(MakeRequest("/api/v3/ajax/shop/"+shopID+"/summary", cookie));
+        JObject listingSummary = JObject.Parse(MakeRequest("/api/v3/ajax/shop/" + shopID + "/summary", cookie));
 
         foreach (JObject obj in listingSummary["sections"])
             listingCount += obj["active_listing_count"].Value<int>();
@@ -43,7 +43,7 @@ string cookie ="API_COOKIE";
             string item = MakeRequest("/api/v3/ajax/shop/" + shopID + "/listings/search?limit=200&offset=" + i + "&sort_field=ending_date&sort_order=descending&state=active&language_id=0&query=&shop_section_id=&listing_tag=&is_featured=&shipping_profile_id=&return_policy_id=&production_partner_id=&is_retail=true&is_retail_only=&is_pattern=&is_pattern_only=&is_digital=&channels=&is_waitlisted=&has_video=", cookie);
 
             page++;
-            
+
             Console.WriteLine(page + ".json");
             File.WriteAllText(page + ".json", item);
 
@@ -74,26 +74,27 @@ string cookie ="API_COOKIE";
             int i = 0;
             while (i < 5)
             {
-                try {
-                Thread.Sleep(1);
-                var baseAddress = new Uri("https://www.etsy.com");
-                using (var handler = new HttpClientHandler { UseCookies = false })
+                try
                 {
-                
-                handler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+                    Thread.Sleep(1);
+                    var baseAddress = new Uri("https://www.etsy.com");
+                    using (var handler = new HttpClientHandler { UseCookies = false })
+                    {
 
-                using (var client = new HttpClient(handler) { BaseAddress = baseAddress })
-                {
-                    var message = new HttpRequestMessage(HttpMethod.Get, url);
-                    message.Headers.Add("User-Agent", "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:128.0) Gecko/20100101 Firefox/128.0");
-                    message.Headers.Add("Cookie", cookie);
-                    var result = client.Send(message);
-                    result.EnsureSuccessStatusCode();
+                        handler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
 
-                    return new StreamReader(result.Content.ReadAsStream()).ReadToEnd();
-                }
+                        using (var client = new HttpClient(handler) { BaseAddress = baseAddress })
+                        {
+                            var message = new HttpRequestMessage(HttpMethod.Get, url);
+                            message.Headers.Add("User-Agent", "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:128.0) Gecko/20100101 Firefox/128.0");
+                            message.Headers.Add("Cookie", cookie);
+                            var result = client.Send(message);
+                            result.EnsureSuccessStatusCode();
 
-                }
+                            return new StreamReader(result.Content.ReadAsStream()).ReadToEnd();
+                        }
+
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -110,7 +111,8 @@ string cookie ="API_COOKIE";
             int i = 0;
             while (i < 5)
             {
-                try{
+                try
+                {
                     Thread.Sleep(1);
                     var baseAddress = new Uri("https://www.etsy.com");
                     using (var handler = new HttpClientHandler { UseCookies = false })
@@ -126,7 +128,8 @@ string cookie ="API_COOKIE";
                         Stream s = result.Content.ReadAsStream();
                         using (StreamReader rdr = new(s))
                         {
-                            while (true) {
+                            while (true)
+                            {
                                 int r = rdr.Read();
                                 if (r == -1)
                                     break;
